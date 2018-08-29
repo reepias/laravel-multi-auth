@@ -42,29 +42,48 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Authentication Links -->
-                        @if (Auth::guest())
-                            <li><a href="{{ route('login') }}">Login</a></li>
-                            <li><a href="{{ route('register') }}">Register</a></li>
-                        @else
+                        @if (Auth::guard('admin')->check() || Auth::guard()->check())
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                    {{ Auth::user()->name }} <span class="caret"></span>
+                                <a id="navbarDropdown" class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    @if (Auth::guard('admin')->check())
+                                        Admin
+                                    @else 
+                                        {{ Auth::user()->name }} 
+                                    @endif
+                                    <span class="caret"></span>
                                 </a>
-
-                                <ul class="dropdown-menu" role="menu">
-                                    <li>
-                                        <a href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                            Logout
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    @if (Auth::guard('admin')->check())
+                                        <a class="dropdown-item" href="{{ url('admin/dashboard')}}">Dashboard</a>
+                                    @else   
+                                        <a class="dropdown-item" href="{{ url('/dashboard')}}">Dashboard</a> 
+                                    @endif
+                                        <a class="dropdown-item" href="{{ route('logout') }}"
+                                        onclick="event.preventDefault();
+                                                        document.getElementById('logout-form').submit();">
+                                            {{ __('Logout') }}
                                         </a>
-
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                             {{ csrf_field() }}
                                         </form>
-                                    </li>
-                                </ul>
+                                </div>
                             </li>
+                        @else
+                            <li class="dropdown">
+                                <a id="linkDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    {{ __('Login') }}
+                                    <span class="caret"></span>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="linkDropdown">
+                                    <a class="dropdown-item" href="{{ route('login') }}">
+                                        {{ __('User') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('admin.login') }}">
+                                        {{ __('Admin') }}
+                                    </a>
+                                </div>
+                            </li>
+                            <li><a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a></li>
                         @endif
                     </ul>
                 </div>
